@@ -5,7 +5,20 @@ from __future__ import annotations
 import logging
 import os
 
-from dotenv import dotenv_values
+def _read_env_file(path: str) -> dict:
+    """Read a .env file manually, tolerating BOM, quotes, and Windows line endings."""
+    result = {}
+    try:
+        with open(path, encoding="utf-8-sig") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, _, val = line.partition("=")
+                result[key.strip()] = val.strip().strip('"').strip("'")
+    except FileNotFoundError:
+        pass
+    return result
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Application,
@@ -18,9 +31,7 @@ from telegram.ext import (
 )
 
 _env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-print(f"Loading .env from: {_env_path} (exists: {os.path.exists(_env_path)})")
-_env = dotenv_values(_env_path)
-print(f"Keys found in .env: {list(_env.keys())}")
+_env = _read_env_file(_env_path)
 
 BOT_TOKEN = _env.get("BOT_TOKEN") or os.environ.get("BOT_TOKEN")
 SUPPORT_CHANNEL_ID = _env.get("SUPPORT_CHANNEL_ID") or os.environ.get("SUPPORT_CHANNEL_ID")
