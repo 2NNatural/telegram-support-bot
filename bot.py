@@ -259,6 +259,15 @@ def main() -> None:
     )
 
     app.add_handler(conv)
+
+    # Catch anyone who messages without pressing Start
+    async def prompt_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        await update.effective_message.reply_text(
+            "Press the Start button or type /start to begin."
+        )
+
+    app.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, prompt_start))
+
     logging.info("Bot started — polling for updates")
     app.run_polling()
 
