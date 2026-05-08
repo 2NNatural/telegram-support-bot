@@ -17,15 +17,18 @@ from telegram.ext import (
     filters,
 )
 
-_env = dotenv_values(os.path.join(os.path.dirname(__file__), ".env"))
+_env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+print(f"Loading .env from: {_env_path} (exists: {os.path.exists(_env_path)})")
+_env = dotenv_values(_env_path)
+print(f"Keys found in .env: {list(_env.keys())}")
 
 BOT_TOKEN = _env.get("BOT_TOKEN") or os.environ.get("BOT_TOKEN")
 SUPPORT_CHANNEL_ID = _env.get("SUPPORT_CHANNEL_ID") or os.environ.get("SUPPORT_CHANNEL_ID")
 
 if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN not set — add it to your .env file")
+    raise RuntimeError(f"BOT_TOKEN not set — .env path was: {_env_path}")
 if not SUPPORT_CHANNEL_ID:
-    raise RuntimeError("SUPPORT_CHANNEL_ID not set — add it to your .env file")
+    raise RuntimeError(f"SUPPORT_CHANNEL_ID not set — .env path was: {_env_path}")
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
