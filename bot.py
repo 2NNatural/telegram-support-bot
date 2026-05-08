@@ -16,7 +16,7 @@ def _read_env_file(path: str) -> dict:
                     continue
                 key, _, val = line.partition("=")
                 result[key.strip()] = val.strip().strip('"').strip("'")
-    except FileNotFoundError:
+    except (FileNotFoundError, OSError):
         pass
     return result
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -32,8 +32,6 @@ from telegram.ext import (
 
 _env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 _env = _read_env_file(_env_path)
-with open(_env_path, "rb") as _f:
-    print("RAW .env bytes:", _f.read())
 
 BOT_TOKEN = _env.get("BOT_TOKEN") or os.environ.get("BOT_TOKEN")
 SUPPORT_CHANNEL_ID = _env.get("SUPPORT_CHANNEL_ID") or os.environ.get("SUPPORT_CHANNEL_ID")
