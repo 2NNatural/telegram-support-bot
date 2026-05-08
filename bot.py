@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import os
 
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Application,
@@ -17,10 +17,15 @@ from telegram.ext import (
     filters,
 )
 
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+_env = dotenv_values(os.path.join(os.path.dirname(__file__), ".env"))
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-SUPPORT_CHANNEL_ID = os.environ["SUPPORT_CHANNEL_ID"]
+BOT_TOKEN = _env.get("BOT_TOKEN") or os.environ.get("BOT_TOKEN")
+SUPPORT_CHANNEL_ID = _env.get("SUPPORT_CHANNEL_ID") or os.environ.get("SUPPORT_CHANNEL_ID")
+
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN not set — add it to your .env file")
+if not SUPPORT_CHANNEL_ID:
+    raise RuntimeError("SUPPORT_CHANNEL_ID not set — add it to your .env file")
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
