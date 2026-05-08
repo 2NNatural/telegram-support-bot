@@ -17,7 +17,7 @@ from telegram.ext import (
     filters,
 )
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 SUPPORT_CHANNEL_ID = os.environ["SUPPORT_CHANNEL_ID"]
